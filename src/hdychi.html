@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="description" content="">
 	<meta name="author" content="">
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	<title>Potree Viewer</title>
 
@@ -32,10 +33,12 @@
 	<script src="../libs/potree/potree/potree.js"></script>
 	<script src="../libs/plasio/js/laslaz.js"></script>
 	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=GfIjvGE8EkCeW7PwkdjOC38hV7hn8nwg"></script>
 	
 	<!-- INCLUDE ADDITIONAL DEPENDENCIES HERE -->
 	<!-- INCLUDE SETTINGS HERE -->
 	<div style="position: relative; width: 100%; height: 100%">
+		<div id="map_container" style="width: 100%; height : 100%; position: absolute;z-index: 0"></div>
 		<div class="potree_container" style="position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; z-index: 1">
 			<div id="potree_render_area"></div>
 
@@ -117,6 +120,11 @@
             viewer.setCameraMode(Potree.CameraMode["ORTHOGRAPHIC"]);
             $("#pespect_btn").classList.remove("active");
         });
+        //Baidu map
+        var map = new BMap.Map("map_container");
+        var point = new BMap.Point(116.404, 39.915);
+        map.centerAndZoom(point, 15);
+        map.enableScrollWheelZoom();
         //relate to Potree
 		var viewer = new Potree.Viewer(document.getElementById("potree_render_area"));
 		
@@ -126,6 +134,7 @@
 		viewer.loadSettingsFromURL();
 		
 		viewer.setDescription("");
+		viewer.background = null;
         let createToolIcon = function (icon, title, callback) {
             let element = $(`
 			<img src="${icon}"
@@ -150,7 +159,7 @@
                 var material = e.pointcloud.material;
                 material.size = 0.01;
                 material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
-
+                material.color = new THREE.Color(0xff0000);
                 viewer.fitToScreen();
             });
             //Potree.setProjection()
